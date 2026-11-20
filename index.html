@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Павел Васильев — Разработка Telegram-ботов, сайтов и AI-сервисов для бизнеса</title>
+  <meta name="description" content="Разработка надежных Telegram-ботов, современных сайтов и AI-решений для бизнеса. Финтех, автоматизация, высокая конверсия. Стек: Python, JS, LLM API, Bybit.">
+  <!-- Favicon Icons -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#F0F7FF',
+              100: '#E0EFFF',
+              500: '#2563EB',
+              600: '#1D4ED8',
+              700: '#1E40AF',
+              900: '#0F172A',
+            },
+            surface: {
+              50: '#F8FAFC',
+              100: '#F1F5F9',
+              200: '#E2E8F0',
+            },
+            accent: {
+              teal: '#0D9488',
+              emerald: '#10B981',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #F8FAFC;
+      color: #0F172A;
+      -webkit-font-smoothing: antialiased;
+    }
+    .ambient-card {
+      background: #FFFFFF;
+      border: 1px solid rgba(226, 232, 240, 0.85);
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 10px 25px -5px rgba(15, 23, 42, 0.04);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .ambient-card:hover {
+      box-shadow: 0 14px 34px -4px rgba(15, 23, 42, 0.08);
+      border-color: #CBD5E1;
+      transform: translateY(-2px);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #0F172A 30%, #2563EB 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .calc-card-active {
+      border-color: #2563EB !important;
+      background-color: #F0F7FF !important;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+    /* Плавный Toast */
+    #toast {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+  </style>
+</head>
+<body class="selection:bg-blue-100 selection:text-blue-900 relative">
+
+  <!-- ТОСТ-УВЕДОМЛЕНИЕ О КОПИРОВАНИИ -->
+  <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-sm font-semibold px-5 py-3 rounded-2xl shadow-2xl opacity-0 pointer-events-none translate-y-4 flex items-center gap-2">
+    <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    <span id="toastMessage">Скопировано в буфер обмена!</span>
+  </div>
+
+  <!-- ПЛАВАЮЩИЙ ВИДЖЕТ TELEGRAM (ВНИЗУ СПРАВА) -->
+  <div class="fixed bottom-6 right-6 z-40">
+    <a href="https://t.me/Pavel_Vasilev" target="_blank" rel="noopener noreferrer" 
+       class="flex items-center gap-3 bg-white hover:bg-slate-50 text-slate-800 p-2 sm:px-4 sm:py-2.5 rounded-full shadow-xl border border-slate-200/80 transition-all hover:scale-105 group">
+      <div class="relative flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white shadow-md shadow-blue-600/30 group-hover:bg-blue-700 transition-colors">
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-1.97 9.28c-.15.65-.53.81-1.08.5l-3-2.21-1.45 1.4c-.16.16-.3.3-.61.3l.22-3.05 5.55-5.02c.24-.22-.05-.34-.38-.13l-6.86 4.32-2.96-.92c-.64-.2-.66-.65.13-.96l11.58-4.46c.54-.19 1.01.13.84.95z"/></svg>
+        <span class="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white animate-pulse"></span>
+      </div>
+      <div class="hidden sm:block text-left pr-1">
+        <div class="text-xs font-bold text-slate-900 leading-tight">Павел Васильев</div>
+        <div class="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+          <span>На связи в Telegram</span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <!-- ШАПКА САЙТА С МОБИЛЬНЫМ МЕНЮ -->
+  <header class="sticky top-0 z-40 bg-white/85 backdrop-blur-md border-b border-slate-200/80 transition-all">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+      
+      <!-- Логотип -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center text-white font-bold text-lg shadow-sm shadow-blue-500/20 group-hover:scale-105 transition-transform">
+          ПВ
+        </div>
+        <div>
+          <div class="font-bold text-slate-900 leading-tight text-base">Павел Васильев</div>
+          <div class="text-xs text-slate-500 font-medium">Разработка ботов, сайтов и AI</div>
+        </div>
+      </a>
+
+      <!-- Десктопное меню -->
+      <nav class="hidden md:flex items-center gap-7 text-sm font-semibold text-slate-600">
+        <a href="#services" class="hover:text-blue-600 transition-colors">Услуги</a>
+        <a href="#portfolio" class="hover:text-blue-600 transition-colors">Кейсы</a>
+        <a href="#calculator" class="hover:text-blue-600 transition-colors text-blue-600 font-bold flex items-center gap-1.5">
+          <span>Калькулятор</span>
+          <span class="px-1.5 py-0.5 text-[10px] rounded-md bg-blue-100 text-blue-700">NEW</span>
+        </a>
+        <a href="#pricing" class="hover:text-blue-600 transition-colors">Цены</a>
+        <a href="#security" class="hover:text-blue-600 transition-colors">Надежность</a>
+        <a href="#process" class="hover:text-blue-600 transition-colors">Этапы</a>
+      </nav>
+
+      <!-- Кнопка связи и гамбургер -->
+      <div class="flex items-center gap-3">
+        <a href="https://t.me/Pavel_Vasilev" target="_blank" rel="noopener noreferrer" 
+           class="hidden sm:inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-5 py-2.5 rounded-xl shadow-sm shadow-blue-600/25 hover:shadow-md hover:shadow-blue-600/30 transition-all">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-1.97 9.28c-.15.65-.53.81-1.08.5l-3-2.21-1.45 1.4c-.16.16-.3.3-.61.3l.22-3.05 5.55-5.02c.24-.22-.05-.34-.38-.13l-6.86 4.32-2.96-.92c-.64-.2-.66-.65.13-.96l11.58-4.46c.54-.19 1.01.13.84.95z"/></svg>
+          <span>Telegram</span>
+        </a>
+
+        <!-- Кнопка мобильного меню -->
+        <button id="mobileMenuBtn" type="button" class="md:hidden p-2.5 rounded-xl text-slate-700 hover:bg-slate-100 transition-colors focus:outline-none" aria-label="Открыть меню">
+          <svg id="burgerIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          <svg id="closeIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Мобильное выпадающее меню -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-slate-200 bg-white/95 backdrop-blur-md px-6 py-6 space-y-4">
+      <a href="#services" class="block text-base font-semibold text-slate-800 hover:text-blue-600 transition-colors py-1">Услуги</a>
+      <a href="#portfolio" class="block text-base font-semibold text-slate-800 hover:text-blue-600 transition-colors py-1">Портфолио и кейсы</a>
+      <a href="#calculator" class="block text-base font-bold text-blue-600 hover:text-blue-700 transition-colors py-1 flex items-center justify-between">
+        <span>Интерактивный калькулятор</span>
+        <span class="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700">NEW</span>
+      </a>
+      <a href="#pricing" class="block text-base font-semibold text-slate-800 hover:text-blue-600 transition-colors py-1">Пакеты и цены</a>
+      <a href="#security" class="block text-base font-semibold text-slate-800 hover:text-blue-600 transition-colors py-1">Стандарты надежности</a>
+      <a href="#process" class="block text-base font-semibold text-slate-800 hover:text-blue-600 transition-colors py-1">Этапы сотрудничества</a>
+      <div class="pt-4 border-t border-slate-100">
+        <a href="https://t.me/Pavel_Vasilev" target="_blank" rel="noopener noreferrer"
+           class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base py-3 rounded-xl shadow-md transition-colors">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-1.97 9.28c-.15.65-.53.81-1.08.5l-3-2.21-1.45 1.4c-.16.16-.3.3-.61.3l.22-3.05 5.55-5.02c.24-.22-.05-.34-.38-.13l-6.86 4.32-2.96-.92c-.64-.2-.66-.65.13-.96l11.58-4.46c.54-.19 1.01.13.84.95z"/></svg>
+          <span>Написать в Telegram @Pavel_Vasilev</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="overflow-hidden">
+
+    <!-- ГЛАВНЫЙ ЭКРАН (HERO) -->
+    <section class="relative pt-12 pb-20 md:pt-20 md:pb-28">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 -z-10 w-full max-w-7xl h-96 bg-gradient-to-b from-blue-50/70 via-indigo-50/30 to-transparent blur-3xl pointer-events-none"></div>
+
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+          
+          <!-- Левая колонка: Оффер и преимущества -->
+          <div class="lg:col-span-7 text-center lg:text-left">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-semibold mb-6 shadow-xs">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Открыт к проектам • Ноябрь 2026</span>
+            </div>
+
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-950 tracking-tight leading-[1.12] mb-6">
+              Разрабатываю <span class="gradient-text">Telegram-ботов</span>, сайты и AI-сервисы для бизнеса
+            </h1>
+
+            <p class="text-lg sm:text-xl text-slate-600 font-normal leading-relaxed mb-8 max-w-2xl mx-auto lg:mx-0">
+              Создаю надежные программные решения с акцентом на финансовую отдачу, стабильность 24/7 и максимальное удобство для ваших клиентов.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-10">
+              <a href="https://t.me/Pavel_Vasilev" target="_blank" rel="noopener noreferrer"
+                 class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base px-7 py-3.5 rounded-xl shadow-lg shadow-blue-600/20 hover:shadow-xl hover:shadow-blue-600/30 transition-all">
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-1.97 9.28c-.15.65-.53.81-1.08.5l-3-2.21-1.45 1.4c-.16.16-.3.3-.61.3l.22-3.05 5.55-5.02c.24-.22-.05-.34-.38-.13l-6.86 4.32-2.96-.92c-.64-.2-.66-.65.13-.96l11.58-4.46c.54-.19 1.01.13.84.95z"/></svg>
+                <span>Обсудить задачу в Telegram</span>
+              </a>
+              <a href="#calculator" 
+                 class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-800 font-semibold text-base px-6 py-3.5 rounded-xl border border-slate-300 shadow-xs hover:border-slate-400 transition-all">
+                <span>Рассчитать стоимость</span>
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </a>
+            </div>
+
+            <!-- Метрики доверия -->
+            <div class="grid grid-cols-3 gap-4 pt-6 border-t border-slate-200/80 max-w-lg mx-auto lg:mx-0">
+              <div>
+                <div class="text-2xl font-bold text-slate-900">100%</div>
+                <div class="text-xs text-slate-500 font-medium mt-0.5">Безопасность данных</div>
+              </div>
+              <div>
+                <div class="text-2xl font-bold text-slate-900">24/7</div>
+                <div class="text-xs text-slate-500 font-medium mt-0.5">Аптайм на сервере</div>
+              </div>
+              <div>
+                <div class="text-2xl font-bold text-slate-900">от 3 дней</div>
+                <div class="text-xs text-slate-500 font-medium mt-0.5">Запуск первого MVP</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Правая колонка: Профиль разработчика -->
+          <div class="lg:col-span-5 flex justify-center">
+            <div class="relative w-full max-w-md">
+              <div class="ambient-card rounded-3xl p-7 border border-slate-200">
+                
+                <!-- Аватар разработчика с fallback -->
+                <div class="relative w-36 h-36 mx-auto mb-6">
+                  <div class="w-full h-full rounded-2xl overflow-hidden bg-gradient-to-tr from-slate-100 to-slate-200 border-2 border-white shadow-md flex items-center justify-center">
+                    <img id="avatarImage" src="avatar.jpg" alt="Павел Васильев" class="w-full h-full object-cover" 
+                         onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center text-white font-extrabold text-3xl\'>ПВ</div>';">
+                  </div>
+                  <span class="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-white shadow-xs" title="На связи"></span>
+                </div>
+
+                <div class="text-center mb-6">
+                  <h3 class="text-xl font-bold text-slate-900">Павел Васильев</h3>
+                  <p class="text-sm font-semibold text-blue-600">Full-Stack & AI Инженер</p>
+                  <p class="text-xs text-slate-500 mt-1">Специалист по автоматизации бизнес-процессов</p>
+                </div>
+
+                <div class="space-y-2.5 mb-6 text-sm">
+                  <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <span class="text-slate-600 font-medium">Основной стек</span>
+                    <span class="font-bold text-slate-800 text-xs">Python • JS • LLM API • Bybit</span>
+                  </div>
+                  <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <span class="text-slate-600 font-medium">Специализация</span>
+                    <span class="font-bold text-slate-800 text-xs">Боты • Финтех • Веб-сервисы</span>
+                  </div>
+                  <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <span class="text-slate-600 font-medium">Гарантия на код</span>
+                    <span class="font-bold text-emerald-600 text-xs">14 дней бесплатной поддержки</span>
+                  </div>
+                </div>
+
+                <a href="https://t.me/Pavel_Vasilev" target="_blank" rel="noopener noreferrer"
+                   class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold flex items-center justify-center gap-2 transition-colors">
+                  <span>Связаться лично: @Pavel_Vasilev</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- СЕКЦИЯ: УСЛУГИ -->
+    <section id="services" class="py-20 bg-white border-y border-slate-200/80">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <span class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">Услуги</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mt-3 mb-4">
+            Что конкретно я разрабатываю для вашего бизнеса
+          </h2>
+          <p class="text-base sm:text-lg text-slate-600">
+            Каждое решение создается «под ключ»: от логики и сценариев до развертывания на сервере и защиты данных.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          
+          <!-- Услуга 1: Telegram-боты -->
+          <div class="ambient-card rounded-2xl p-7 flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 mb-3">Telegram-боты & WebApps</h3>
+              <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                Автоворонки продаж, боты для сбора заявок, онлайн-запись клиентов, закрытые клубы с платной подпиской и WebApp-интерфейсы прямо внутри Telegram.
+              </p>
+            </div>
+            <ul class="space-y-2 text-xs font-semibold text-slate-700 pt-4 border-t border-slate-100">
+              <li class="flex items-center gap-2">✓ Интеграция с CRM и Google Таблицами</li>
+              <li class="flex items-center gap-2">✓ Прием онлайн-оплаты через банки РФ</li>
+              <li class="flex items-center gap-2">✓ Интуитивное меню и мгновенный отклик</li>
+            </ul>
+          </div>
+
+          <!-- Услуга 2: Финтех и алго-боты -->
+          <div class="ambient-card rounded-2xl p-7 flex flex-col justify-between border-blue-200 ring-1 ring-blue-500/10">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-6">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 mb-3">Финтех & Алгоритмические боты</h3>
+              <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                Сложные торговые роботы, интеграция биржевых API (Bybit, Binance), микро-скальпинг, отслеживание волатильности, риск-контроль и моментальные PnL-отчеты.
+              </p>
+            </div>
+            <ul class="space-y-2 text-xs font-semibold text-slate-700 pt-4 border-t border-slate-100">
+              <li class="flex items-center gap-2">✓ Подпись HMAC-SHA256 без права вывода</li>
+              <li class="flex items-center gap-2">✓ Встроенные предохранители депозита</li>
+              <li class="flex items-center gap-2">✓ Скорость реакции до 5 миллисекунд</li>
+            </ul>
+          </div>
+
+          <!-- Услуга 3: Сайты и лендинги -->
+          <div class="ambient-card rounded-2xl p-7 flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-6">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 mb-3">Сайты & Конверсионные лендинги</h3>
+              <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                Современные сайты в благородном светлом стиле. Чистый код без медленных конструкторов, моментальная загрузка на смартфонах и фокус на высокую конверсию.
+              </p>
+            </div>
+            <ul class="space-y-2 text-xs font-semibold text-slate-700 pt-4 border-t border-slate-100">
+              <li class="flex items-center gap-2">✓ Идеальная мобильная адаптивность</li>
+              <li class="flex items-center gap-2">✓ Интерактивные калькуляторы стоимости</li>
+              <li class="flex items-center gap-2">✓ Мгновенная отправка лидов вам в Telegram</li>
+            </ul>
+          </div>
+
+          <!-- Услуга 4: AI ассистенты -->
+          <div class="ambient-card rounded-2xl p-7 flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-6">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 mb-3">AI-помощники и Нейросети</h3>
+              <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                Внедрение ChatGPT / Claude / Gemini: автоматическая квалификация лидов, консультации по базе знаний вашей компании, генерация контента и ТЗ.
+              </p>
+            </div>
+            <ul class="space-y-2 text-xs font-semibold text-slate-700 pt-4 border-t border-slate-100">
+              <li class="flex items-center gap-2">✓ Обучение на ваших регламентах и прайсах</li>
+              <li class="flex items-center gap-2">✓ Отвечает клиентам за 3 секунды 24/7</li>
+              <li class="flex items-center gap-2">✓ Экономит до 80 часов рутины менеджеров</li>
+            </ul>
+          </div>
+
+          <!-- Услуга 5: Парсеры и автоматизация -->
+          <div class="ambient-card rounded-2xl p-7 flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-6">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 mb-3">Парсинг данных и Автоматизация</h3>
+              <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                Сбор цен конкурентов, мониторинг объявлений (Авито, карты, маркетплейсы), синхронизация между Kaiten, Planfix, CRM и устранение ручной рутины.
+              </p>
+            </div>
+            <ul class="space-y-2 text-xs font-semibold text-slate-700 pt-4 border-t border-slate-100">
+              <li class="flex items-center gap-2">✓ Выгрузка в Excel / Google Таблицы</li>
+              <li class="flex items-center gap-2">✓ Уведомления о новых событиях в Telegram</li>
+              <li class="flex items-center gap-2">✓ Защита от блокировок и сбоев</li>
+            </ul>
+          </div>
+
+          <!-- Услуга 6: Поддержка и доработка -->
+          <div class="ambient-card rounded-2xl p-7 flex flex-col justify-between bg-gradient-to-br from-white to-blue-50/40">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-6">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 mb-3">Сопровождение и Серверы</h3>
+              <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                Развертывание проектов на защищенных VPS (Linux / Ubuntu в РФ), автозапуск демонов, мониторинг памяти и резервное копирование.
+              </p>
+            </div>
+            <ul class="space-y-2 text-xs font-semibold text-slate-700 pt-4 border-t border-slate-100">
+              <li class="flex items-center gap-2">✓ Полная передача всех исходных кодов</li>
+              <li class="flex items-center gap-2">✓ Понятная инструкция по запуску</li>
+              <li class="flex items-center gap-2">✓ 14 дней гарантийной поддержки</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- СЕКЦИЯ: РЕАЛЬНЫЕ КЕЙСЫ (ПОРТФОЛИО С ЖИВЫМИ ССЫЛКАМИ) -->
+    <section id="portfolio" class="py-20">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">Кейсы</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mt-3">
+              Реализованные проекты и результаты
+            </h2>
+          </div>
+          <p class="text-slate-500 text-sm max-w-md mt-4 md:mt-0">
+            Реальные работающие системы. Вы можете прямо сейчас перейти по ссылкам и протестировать продукты вживую.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          <!-- Кейс 1: AI-менеджер Лесной Берег (ЖИВОЙ БОТ!) -->
+          <div class="ambient-card rounded-3xl overflow-hidden flex flex-col justify-between border-2 border-emerald-500/20 ring-1 ring-emerald-500/10">
+            <div class="p-7">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  🌿 HoReCa / AI-Ассистент
+                </span>
+                <span class="inline-flex items-center gap-1.5 text-xs text-emerald-600 font-bold bg-emerald-50/80 px-2.5 py-0.5 rounded-full">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Работает в Telegram
+                </span>
+              </div>
+              
+              <h3 class="text-2xl font-bold text-slate-900 mb-2">
+                AI-менеджер бронирования комплекса «Лесной Берег»
+              </h3>
+              
+              <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                Автономный ИИ-администратор для ресторанно-банкетного комплекса. Распознает намерения гостей, удерживает контекст диалога, мгновенно рассчитывает банкетную смету от 3 500 ₽/персону, отвечает на частые вопросы (пробковый сбор 0 ₽, дети, животные) и собирает лиды в CRM.
+              </p>
+
+              <div class="bg-slate-50 rounded-2xl p-4 mb-6 border border-slate-100 space-y-2 text-xs">
+                <div class="flex justify-between items-center"><span class="text-slate-500">Скорость ответа:</span> <span class="font-bold text-slate-800">менее 2 секунд 24/7</span></div>
+                <div class="flex justify-between items-center"><span class="text-slate-500">Интерактив:</span> <span class="font-bold text-emerald-600">Inline-кнопки + расчет сметы</span></div>
+                <div class="flex justify-between items-center"><span class="text-slate-500">Стек:</span> <span class="font-bold text-slate-700">Python • Gemini 3.5 Flash • pyTelegramBotAPI</span></div>
+              </div>
+            </div>
+
+            <div class="p-7 pt-0">
+              <a href="https://t.me/lesnoy_Admin_bereg_bot" target="_blank" rel="noopener noreferrer"
+                 class="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm py-3 px-5 rounded-xl shadow-md shadow-emerald-600/20 transition-all">
+                <span>Протестировать живого бота в Telegram</span>
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-1.97 9.28c-.15.65-.53.81-1.08.5l-3-2.21-1.45 1.4c-.16.16-.3.3-.61.3l.22-3.05 5.55-5.02c.24-.22-.05-.34-.38-.13l-6.86 4.32-2.96-.92c-.64-.2-.66-.65.13-.96l11.58-4.46c.54-.19 1.01.13.84.95z"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Кейс 2: Финтех Bybit Futures бот -->
+          <div class="ambient-card rounded-3xl overflow-hidden flex flex-col justify-between border-2 border-blue-500/20 ring-1 ring-blue-500/10">
+            <div class="p-7">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold px-3 py-1 rounded-full bg-blue-50 text-blue-800 border border-blue-200">
+                  📈 Финтех / Алготрейдинг
+                </span>
+                <span class="text-xs text-slate-400 font-medium">Ноябрь 2026</span>
+              </div>
+              
+              <h3 class="text-2xl font-bold text-slate-900 mb-2">
+                Bybit Futures: Торговый робот с контролем рисков
+              </h3>
+              
+              <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                Автономный алгоритмический робот для торговли фьючерсами через Bybit V5 REST API. Микро-скальпинг (Bollinger Bands + RSI + 15M EMA20), трейлинг-стопы, авто-перевод в безубыток, предохранитель Circuit Breaker от серий убытков и оперативный PnL-мониторинг в Telegram.
+              </p>
+
+              <div class="bg-slate-50 rounded-2xl p-4 mb-6 border border-slate-100 space-y-2 text-xs">
+                <div class="flex justify-between items-center"><span class="text-slate-500">Частота анализа:</span> <span class="font-bold text-slate-800">Цикл каждые 5 секунд</span></div>
+                <div class="flex justify-between items-center"><span class="text-slate-500">Безопасность API:</span> <span class="font-bold text-blue-600">HMAC-SHA256 (строго без вывода)</span></div>
+                <div class="flex justify-between items-center"><span class="text-slate-500">Стек:</span> <span class="font-bold text-slate-700">Python 3.12 • Bybit V5 • Telegram Bot API</span></div>
+              </div>
+            </div>
+
+            <div class="p-7 pt-0">
+              <a href="#security" 
+                 class="w-full inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm py-3 px-5 rounded-xl shadow-md transition-all">
+                <span>Изучить архитектуру безопасности</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Кейс 3: SirMeow (ЖИВОЙ САЙТ!) -->
+          <div class="ambient-card rounded-3xl overflow-hidden flex flex-col justify-between">
+            <div class="p-7">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold px-3 py-1 rounded-full bg-indigo-50 text-indigo-800 border border-indigo-200">
+                  🌐 Web & Interactive UI
+                </span>
+                <span class="inline-flex items-center gap-1 text-xs text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded-full">
+                  Online
+                </span>
+              </div>
+              
+              <h3 class="text-2xl font-bold text-slate-900 mb-2">
+                SirMeow: Интерактивный веб-сервис с игрой
+              </h3>
+              
+              <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                Адаптивный конверсионный лендинг с интерактивной мини-игрой, динамическим калькулятором доходности, отображением блокчейн-метрик Solana и идеальной оценкой скорости загрузки на смартфонах.
+              </p>
+
+              <div class="bg-slate-50 rounded-2xl p-4 mb-6 border border-slate-100 space-y-2 text-xs">
+                <div class="flex justify-between items-center"><span class="text-slate-500">Google PageSpeed:</span> <span class="font-bold text-emerald-600">99 / 100 баллов</span></div>
+                <div class="flex justify-between items-center"><span class="text-slate-500">Интерактив:</span> <span class="font-bold text-slate-800">HTML5 Canvas Игра + Калькулятор</span></div>
+                <div class="flex justify-between items-center"><span class="text-slate-500">Стек:</span> <span class="font-bold text-slate-700">HTML5 • Tailwind CSS • JS ES6 • Surge</span></div>
+              </div>
+            </div>
+
+            <div class="p-7 pt-0">
+              <a href="https://sirmeow-sol.surge.sh/" target="_blank" rel="noopener noreferrer"
+                 class="w-full inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm py-3 px-5 rounded-xl shadow-md shadow-indigo-600/20 transition-all">
+                <span>Открыть живой сайт проекта ➔</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Кейс 4: E-commerce 10 000 SKU -->
+          <div class="ambient-card rounded-3xl overflow-hidden flex flex-col justify-between">
+            <div class="p-7">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold px-3 py-1 rounded-full bg-purple-50 text-purple-800 border border-purple-200">
+                  📦 E-commerce & Документооборот
+                </span>
+                <span class="text-xs text-slate-400 font-medium">NDA</span>
+              </div>
+              
+              <h3 class="text-2xl font-bold text-slate-900 mb-2">
+                Сквозная автоматизация селлера (10 000+ SKU)
+              </h3>
+              
+              <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                Архитектура обработки клиентского потока для селлера Wildberries / Ozon: AI-анализ тональности отзывов, автогенерация ответов, мгновенная эскалация негатива и оцифровка накладных через Vision AI без ручного ввода.
+              </p>
+
+              <div class="bg-slate-50 rounded-2xl p-4 mb-6 border border-slate-100 space-y-2 text-xs">
+                <div class="flex justify-between items-center"><span class="text-slate-500">Экономия времени:</span> <span class="font-bold text-emerald-600">-15 часов рутины в неделю</span></div>
+                <div class="flex justify-between items-center"><span class="text-slate-500">Синхронизация:</span> <span class="font-bold text-slate-800">JSON в Google Sheets и CRM</span></div>
+                <div class="flex justify-between items-center"><span class="text-slate-500">Стек:</span> <span class="font-bold text-slate-700">n8n • Webhooks • Vision AI • PostgreSQL</span></div>
+              </div>
+            </div>
+
+            <div class="p-7 pt-0">
+              <a href="https://t.me/Pavel_Vasilev?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20%D0%98%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D0%B5%D0%BD%20%D0%BA%D0%B5%D0%B9%D1%81%20%D0%B0%D0%B2%D1%82%D0%BE%D0%BC%D0%B0%D1%82%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8%20%D0%B8%20%D0%BE%D1%86%D0%B8%D1%84%D1%80%D0%BE%D0%B2%D0%BA%D0%B8" target="_blank" rel="noopener noreferrer"
+                 class="w-full inline-flex items-center justify-center gap-2 border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800 font-semibold text-sm py-3 px-5 rounded-xl transition-all">
+                <span>Обсудить похожую задачу</span>
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- СЕКЦИЯ: ИНТЕРАКТИВНЫЙ КАЛЬКУЛЯТОР СТОИМОСТИ (НОВИНКА!) -->
+    <section id="calculator" class="py-20 bg-slate-100/60 border-y border-slate-200/80">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6">
+        
+        <div class="text-center max-w-2xl mx-auto mb-14">
+          <span class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3.5 py-1.5 rounded-full border border-blue-200">
+            Онлайн-расчет
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mt-3 mb-3">
+            Рассчитайте стоимость вашего проекта
+          </h2>
+          <p class="text-slate-600 text-sm sm:text-base">
+            Выберите нужные параметры и получите ориентировочную смету и срок реализации за 30 секунд.
+          </p>
+        </div>
+
+        <div class="ambient-card rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-xl">
+          
+          <!-- Шаг 1: Тип продукта -->
+          <div class="mb-8">
+            <label class="block text-sm font-bold text-slate-900 mb-3">
+              1. Что именно требуется разработать?
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              
+              <label class="calc-type-label p-4 rounded-2xl border border-slate-200 bg-white cursor-pointer transition-all flex flex-col justify-between hover:border-blue-400 calc-card-active">
+                <input type="radio" name="project_type" value="bot" checked class="hidden" data-base="22000" data-days="4" data-title="Telegram-бот для бизнеса">
+                <div>
+                  <div class="text-2xl mb-1.5">🤖</div>
+                  <div class="font-bold text-sm text-slate-900">Telegram-бот</div>
+                  <div class="text-xs text-slate-500 mt-1">Воронка, заявки, меню</div>
+                </div>
+                <div class="text-xs font-extrabold text-blue-600 mt-3">от 22 000 ₽</div>
+              </label>
+
+              <label class="calc-type-label p-4 rounded-2xl border border-slate-200 bg-white cursor-pointer transition-all flex flex-col justify-between hover:border-blue-400">
+                <input type="radio" name="project_type" value="site" class="hidden" data-base="25000" data-days="5" data-title="Продающий сайт / Лендинг">
+                <div>
+                  <div class="text-2xl mb-1.5">🌐</div>
+                  <div class="font-bold text-sm text-slate-900">Сайт / Лендинг</div>
+                  <div class="text-xs text-slate-500 mt-1">Адаптивный чистый код</div>
+                </div>
+                <div class="text-xs font-extrabold text-blue-600 mt-3">от 25 000 ₽</div>
+              </label>
+
+              <label class="calc-type-label p-4 rounded-2xl border border-slate-200 bg-white cursor-pointer transition-all flex flex-col justify-between hover:border-blue-400">
+                <input type="radio" name="project_type" value="ai" class="hidden" data-base="35000" data-days="7" data-title="AI-ассистент / Консультант">
+                <div>
+                  <div class="text-2xl mb-1.5">🧠</div>
+                  <div class="font-bold text-sm text-slate-900">AI-ассистент</div>
+                  <div class="text-xs text-slate-500 mt-1">База знаний + LLM API</div>
+                </div>
+                <div class="text-xs font-extrabold text-blue-600 mt-3">от 35 000 ₽</div>
+              </label>
+
+              <label class="calc-type-label p-4 rounded-2xl border border-slate-200 bg-white cursor-pointer transition-all flex flex-col justify-between hover:border-blue-400">
+                <input type="radio" name="project_type" value="fintech" class="hidden" data-base="50000" data-days="10" data-title="Финтех / Bybit торговый бот">
+                <div>
+                  <div class="text-2xl mb-1.5">📈</div>
+                  <div class="font-bold text-sm text-slate-900">Финтех / Биржи</div>
+                  <div class="text-xs text-slate-500 mt-1">Bybit/Binance алго-бот</div>
+                </div>
+                <div class="text-xs font-extrabold text-blue-600 mt-3">от 50 000 ₽</div>
+              </label>
+
+            </div>
+          </div>
+
+          <!-- Шаг 2: Дополнительные модули -->
+          <div class="mb-8">
+            <label class="block text-sm font-bold text-slate-900 mb-3">
+              2. Необходимый функционал и интеграции:
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              
+              <label class="calc-addon flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition-colors">
+                <input type="checkbox" class="mt-1 rounded text-blue-600 focus:ring-blue-500 w-4 h-4" data-price="9000" data-days="2" data-name="Прием онлайн-оплаты (СБП/карты)">
+                <div>
+                  <div class="text-sm font-semibold text-slate-900">Прием онлайн-оплат (ЮKassa / СБП / Карты / Крипта)</div>
+                  <div class="text-xs text-slate-500">+9 000 ₽ • 1–2 дня</div>
+                </div>
+              </label>
+
+              <label class="calc-addon flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition-colors">
+                <input type="checkbox" class="mt-1 rounded text-blue-600 focus:ring-blue-500 w-4 h-4" data-price="8000" data-days="2" data-name="Интеграция с CRM / Таблицами" checked>
+                <div>
+                  <div class="text-sm font-semibold text-slate-900">Синхронизация с CRM (Google Sheets / Amo / Planfix)</div>
+                  <div class="text-xs text-slate-500">+8 000 ₽ • 1–2 дня</div>
+                </div>
+              </label>
+
+              <label class="calc-addon flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition-colors">
+                <input type="checkbox" class="mt-1 rounded text-blue-600 focus:ring-blue-500 w-4 h-4" data-price="15000" data-days="3" data-name="Обучение нейросети на базе знаний компании">
+                <div>
+                  <div class="text-sm font-semibold text-slate-900">База знаний компании (RAG / файлы / регламенты)</div>
+                  <div class="text-xs text-slate-500">+15 000 ₽ • 2–3 дня</div>
+                </div>
+              </label>
+
+              <label class="calc-addon flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition-colors">
+                <input type="checkbox" class="mt-1 rounded text-blue-600 focus:ring-blue-500 w-4 h-4" data-price="12000" data-days="2" data-name="Парсер данных и авто-мониторинг">
+                <div>
+                  <div class="text-sm font-semibold text-slate-900">Парсинг сайтов / мониторинг цен конкурентов</div>
+                  <div class="text-xs text-slate-500">+12 000 ₽ • 2 дня</div>
+                </div>
+              </label>
+
+            </div>
+          </div>
+
+          <!-- Шаг 3: Срочность -->
+          <div class="mb-8">
+            <label class="block text-sm font-bold text-slate-900 mb-3">
+              3. Срочность выполнения:
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg">
+              <label class="p-3.5 rounded-xl border border-blue-500 bg-blue-50/50 cursor-pointer flex items-center justify-between urgency-label">
+                <div class="flex items-center gap-2.5">
+                  <input type="radio" name="urgency" value="normal" checked class="text-blue-600 focus:ring-blue-500">
+                  <span class="text-sm font-semibold text-slate-900">Обычный темп</span>
+                </div>
+                <span class="text-xs font-bold text-slate-600">Стандартная цена</span>
+              </label>
+              <label class="p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer flex items-center justify-between urgency-label">
+                <div class="flex items-center gap-2.5">
+                  <input type="radio" name="urgency" value="express" class="text-blue-600 focus:ring-blue-500">
+                  <span class="text-sm font-semibold text-slate-900">⚡️ Срочно (MVP в 2 раза быстрее)</span>
+                </div>
+                <span class="text-xs font-bold text-blue-600">+20%</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Итоговый блок расчета -->
+          <div class="pt-8 border-t border-slate-200/90 flex flex-col md:flex-row items-center justify-between gap-6 bg-slate-50/60 -mx-6 -mb-6 sm:-mx-10 sm:-mb-10 p-6 sm:p-8 rounded-b-3xl">
+            <div>
+              <div class="text-xs text-slate-500 font-medium">Ориентировочная смета проекта:</div>
+              <div class="flex items-baseline gap-2 mt-1">
+                <span id="calcPrice" class="text-3xl sm:text-4xl font-extrabold text-slate-950">30 000 ₽</span>
+                <span id="calcDays" class="text-sm font-semibold text-slate-500">• срок: 5–6 рабочих дней</span>
+              </div>
+              <div class="text-[11px] text-slate-400 mt-1">Включает развертывание на сервере + 14 дней гарантии</div>
+            </div>
+
+            <a id="calcTelegramBtn" href="https://t.me/Pavel_Vasilev" target="_blank" rel="noopener noreferrer"
+               class="w-full md:w-auto inline-flex items-center justify-center gap-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base px-8 py-4 rounded-xl shadow-lg shadow-blue-600/20 hover:shadow-xl hover:shadow-blue-600/30 transition-all flex-shrink-0">
+              <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-1.97 9.28c-.15.65-.53.81-1.08.5l-3-2.21-1.45 1.4c-.16.16-.3.3-.61.3l.22-3.05 5.55-5.02c.24-.22-.05-.34-.38-.13l-6.86 4.32-2.96-.92c-.64-.2-.66-.65.13-.96l11.58-4.46c.54-.19 1.01.13.84.95z"/></svg>
+              <span>Заказать проект по этому расчету</span>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- СЕКЦИЯ: ТАРИФЫ И ПРОЗРАЧНЫЕ ЦЕНЫ -->
+    <section id="pricing" class="py-20 bg-white border-b border-slate-200/80">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <span class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">Цены</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mt-3 mb-4">
+            Прозрачные пакеты без скрытых доплат
+          </h2>
+          <p class="text-slate-600 text-sm sm:text-base">
+            Фиксированная стоимость после утверждения ТЗ. Вы точно знаете, за что платите и когда получите результат.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+          
+          <!-- Тариф 1: Старт -->
+          <div class="ambient-card rounded-3xl p-8 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-700">Базовый</span>
+                <span class="text-xs font-medium text-slate-500">2–4 дня</span>
+              </div>
+              <h3 class="text-2xl font-bold text-slate-900 mb-2">«Старт»</h3>
+              <p class="text-slate-500 text-xs mb-6">Идеально для быстрой проверки гипотезы или автоматизации одного процесса.</p>
+              
+              <div class="mb-6">
+                <span class="text-4xl font-extrabold text-slate-900">от 18 000 ₽</span>
+                <span class="text-xs text-slate-400 block mt-1">разово за готовый проект</span>
+              </div>
+
+              <div class="space-y-3 text-xs text-slate-600 font-medium mb-8">
+                <div class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  <span>Telegram-бот для заявок или адаптивный сайт</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  <span>Интеграция с уведомлениями в ваш Telegram</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  <span>Развертывание и настройка на сервере</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  <span>7 дней гарантийной поддержки</span>
+                </div>
+              </div>
+            </div>
+
+            <a href="https://t.me/Pavel_Vasilev?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BE%D0%B1%D1%81%D1%83%D0%B4%D0%B8%D1%82%D1%8C%20%D1%82%D0%B0%D1%80%D0%B8%D1%84%20%D0%A1%D1%82%D0%B0%D1%80%D1%82" target="_blank" rel="noopener noreferrer"
+               class="w-full py-3 px-4 rounded-xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800 text-sm font-semibold text-center transition-colors">
+              Выбрать тариф «Старт»
+            </a>
+          </div>
+
+          <!-- Тариф 2: Бизнес (Хит) -->
+          <div class="ambient-card rounded-3xl p-8 flex flex-col justify-between border-2 border-blue-600 relative shadow-xl shadow-blue-500/10">
+            <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[11px] font-bold px-3.5 py-1 rounded-full uppercase tracking-wider">
+              Самый популярный
+            </span>
+
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold px-3 py-1 rounded-full bg-blue-50 text-blue-700">Комплекс</span>
+                <span class="text-xs font-medium text-slate-500">6–10 дней</span>
+              </div>
+              <h3 class="text-2xl font-bold text-slate-900 mb-2">«Бизнес»</h3>
+              <p class="text-slate-500 text-xs mb-6">Полный цикл: сайт для трафика + бот для прогрева и удержания клиентов.</p>
+              
+              <div class="mb-6">
+                <span class="text-4xl font-extrabold text-slate-900">от 42 000 ₽</span>
+                <span class="text-xs text-slate-400 block mt-1">под ключ с полным запуском</span>
+              </div>
+
+              <div class="space-y-3 text-xs text-slate-700 font-medium mb-8">
+                <div class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  <span>Продающий сайт + Интерактивный Telegram-бот</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  <span>Интеграция с CRM (AmoCRM / Planfix / Google Sheets)</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  <span>Подключение онлайн-эквайринга (платежи в боте)</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  <span>14 дней гарантийной поддержки и доработок</span>
+                </div>
+              </div>
+            </div>
+
+            <a href="https://t.me/Pavel_Vasilev?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BE%D0%B1%D1%81%D1%83%D0%B4%D0%B8%D1%82%D1%8C%20%D1%82%D0%B0%D1%80%D0%B8%D1%84%20%D0%91%D0%B8%D0%B7%D0%BD%D0%B5%D1%81" target="_blank" rel="noopener noreferrer"
+               class="w-full py-3.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold text-center shadow-md shadow-blue-600/20 transition-all">
+              Заказать тариф «Бизнес»
+            </a>
+          </div>
+
+          <!-- Тариф 3: PRO / Финтех -->
+          <div class="ambient-card rounded-3xl p-8 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold px-3 py-1 rounded-full bg-slate-900 text-white">Индивидуально</span>
+                <span class="text-xs font-medium text-slate-500">от 14 дней</span>
+              </div>
+              <h3 class="text-2xl font-bold text-slate-900 mb-2">«PRO / Финтех»</h3>
+              <p class="text-slate-500 text-xs mb-6">Сложные инженерные системы: биржевые роботы, AI-ассистенты, базы данных.</p>
+              
+              <div class="mb-6">
+                <span class="text-4xl font-extrabold text-slate-900">от 75 000 ₽</span>
+                <span class="text-xs text-slate-400 block mt-1">под индивидуальное техзадание</span>
+              </div>
+
+              <div class="space-y-3 text-xs text-slate-600 font-medium mb-8">
+                <div class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  <span>Финтех / Алгоритмический торговый робот (Bybit / Binance)</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  <span>Внедрение собственной обученной нейросети (LLM)</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  <span>Высоконагруженная архитектура с защитой от отказов</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                  <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  <span>30 дней расширенного персонального саппорта</span>
+                </div>
+              </div>
+            </div>
+
+            <a href="https://t.me/Pavel_Vasilev?text=%D0%9F%D1%80%D0%B8%D0%B2%D0%B5%D1%82!%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%BE%D0%B1%D1%81%D1%83%D0%B4%D0%B8%D1%82%D1%8C%20PRO%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82" target="_blank" rel="noopener noreferrer"
+               class="w-full py-3 px-4 rounded-xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800 text-sm font-semibold text-center transition-colors">
+              Обсудить PRO-проект
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- СЕКЦИЯ: БЕЗОПАСНОСТЬ И СТАНДАРТЫ НАДЕЖНОСТИ -->
+    <section id="security" class="py-20">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        
+        <div class="bg-gradient-to-br from-slate-900 to-slate-950 rounded-3xl p-8 sm:p-12 text-white shadow-xl">
+          <div class="max-w-3xl mb-12">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/80 px-3 py-1 rounded-full border border-emerald-800">Стандарты надежности</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mt-4 mb-4">
+              Как я гарантирую безопасность и бесперебойность
+            </h2>
+            <p class="text-slate-300 text-sm sm:text-base">
+              В отличие от любительских поделок, мои решения строятся по строгим корпоративным стандартам безопасности.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-xs">
+              <div class="text-emerald-400 font-bold text-base mb-2">01. Ноль секретов в коде</div>
+              <p class="text-slate-300 text-xs leading-relaxed">
+                Все пароли и API-ключи хранятся в изолированных .env файлах на сервере и никогда не попадают в открытые репозитории.
+              </p>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-xs">
+              <div class="text-emerald-400 font-bold text-base mb-2">02. Принцип Least Privilege</div>
+              <p class="text-slate-300 text-xs leading-relaxed">
+                Ключи бирж и сервисов настраиваются строго без права вывода средств. Деньги клиента физически невозможно украсть.
+              </p>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-xs">
+              <div class="text-emerald-400 font-bold text-base mb-2">03. Предохранители Circuit Breaker</div>
+              <p class="text-slate-300 text-xs leading-relaxed">
+                Внедрение систем защиты от сбоев: при нестандартном поведении рынка или API бот ставит процесс на паузу, защищая баланс.
+              </p>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-xs">
+              <div class="text-emerald-400 font-bold text-base mb-2">04. Защищенная криптография</div>
+              <p class="text-slate-300 text-xs leading-relaxed">
+                Использование HMAC-SHA256 подписи запросов с контролем временного окна, предотвращающее перехват команд.
+              </p>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-xs">
+              <div class="text-emerald-400 font-bold text-base mb-2">05. Полная передача прав</div>
+              <p class="text-slate-300 text-xs leading-relaxed">
+                100% исходного кода, базы данных и доступы передаются вам. Вы не привязаны ко мне и являетесь полноправным владельцем продукта.
+              </p>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-xs">
+              <div class="text-emerald-400 font-bold text-base mb-2">06. 14 дней гарантии</div>
+              <p class="text-slate-300 text-xs leading-relaxed">
+                После сдачи проекта я остаюсь на связи: бесплатно исправляю любые скрытые недочеты и консультирую по работе.
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- СЕКЦИЯ: ЭТАПЫ РАБОТЫ -->
+    <section id="process" class="py-20 bg-white border-b border-slate-200/80">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <span class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">Этапы</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mt-3 mb-4">
+            Как строится наше сотрудничество
+          </h2>
+          <p class="text-slate-600 text-sm sm:text-base">
+            Без затягивания сроков и непонятной терминологии — прозрачный путь от вашей идеи до готового продукта.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          
+          <div class="relative">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 font-extrabold flex items-center justify-center mb-4 text-base border border-blue-100">
+              1
+            </div>
+            <h4 class="text-lg font-bold text-slate-900 mb-2">Обсуждение и бриф</h4>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              В переписке или 15-минутном созвоне разбираем задачу, бизнес-цели и формируем четкое техническое задание.
+            </p>
+          </div>
+
+          <div class="relative">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 font-extrabold flex items-center justify-center mb-4 text-base border border-blue-100">
+              2
+            </div>
+            <h4 class="text-lg font-bold text-slate-900 mb-2">Прототип и архитектура</h4>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              Согласовываем структуру, логику экранов или сценариев бота перед тем, как писать боевой код.
+            </p>
+          </div>
+
+          <div class="relative">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 font-extrabold flex items-center justify-center mb-4 text-base border border-blue-100">
+              3
+            </div>
+            <h4 class="text-lg font-bold text-slate-900 mb-2">Разработка и тесты</h4>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              Пишу чистый код, подключаю API, базы данных и провожу тестирование под нагрузкой. Показываю демо.
+            </p>
+          </div>
+
+          <div class="relative">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 font-extrabold flex items-center justify-center mb-4 text-base border border-emerald-100">
+              4
+            </div>
+            <h4 class="text-lg font-bold text-slate-900 mb-2">Релиз и поддержка</h4>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              Разворачиваю проект на сервере, передаю доступы, провожу обучение и даю 14 дней гарантийной поддержки.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- СЕКЦИЯ: ФИНАЛЬНЫЙ ПРИЗЫВ И КОНТАКТЫ -->
+    <section id="contact" class="py-20">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+        
+        <div class="ambient-card rounded-3xl p-8 sm:p-14 border border-slate-200">
+          <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-6">
+            <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-1.97 9.28c-.15.65-.53.81-1.08.5l-3-2.21-1.45 1.4c-.16.16-.3.3-.61.3l.22-3.05 5.55-5.02c.24-.22-.05-.34-.38-.13l-6.86 4.32-2.96-.92c-.64-.2-.66-.65.13-.96l11.58-4.46c.54-.19 1.01.13.84.95z"/></svg>
+          </div>
+
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-4">
+            Есть задача или идея для проекта?
+          </h2>
+          <p class="text-slate-600 text-base sm:text-lg max-w-xl mx-auto mb-8">
+            Напишите мне в Telegram — отвечу в течение 30 минут, помогу оценить сроки, стоимость и техническую реализацию.
+          </p>
+
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto mb-6">
+            <a href="https://t.me/Pavel_Vasilev" target="_blank" rel="noopener noreferrer"
+               class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base px-8 py-4 rounded-xl shadow-lg shadow-blue-600/20 hover:shadow-xl hover:shadow-blue-600/30 transition-all">
+              <span>Написать @Pavel_Vasilev</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </a>
+            <button id="copyUsernameBtn" type="button"
+                    class="w-full sm:w-auto px-5 py-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-sm font-semibold transition-colors flex items-center justify-center gap-2" title="Скопировать юзернейм">
+              <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+              <span>Скопировать @username</span>
+            </button>
+          </div>
+
+          <p class="text-xs text-slate-400">
+            Открыт к проектной разработке, внедрению автоматизаций и долгосрочному контракту.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ФУТЕР -->
+  <footer class="bg-white border-t border-slate-200 py-10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-900">Павел Васильев</span>
+        <span>•</span>
+        <span>AI, Боты & Веб-разработка</span>
+      </div>
+      <div>
+        Прямой контакт: <a href="https://t.me/Pavel_Vasilev" class="text-blue-600 hover:underline font-semibold">@Pavel_Vasilev</a>
+      </div>
+      <div>
+        © 2026. Все права защищены.
+      </div>
+    </div>
+  </footer>
+
+  <!-- СКРИПТЫ: МОБИЛЬНОЕ МЕНЮ, КАЛЬКУЛЯТОР, ТОСТЫ -->
+  <script>
+    // 1. Мобильное меню
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const burgerIcon = document.getElementById('burgerIcon');
+    const closeIcon = document.getElementById('closeIcon');
+
+    if (mobileMenuBtn && mobileMenu) {
+      mobileMenuBtn.addEventListener('click', () => {
+        const isHidden = mobileMenu.classList.contains('hidden');
+        if (isHidden) {
+          mobileMenu.classList.remove('hidden');
+          burgerIcon.classList.add('hidden');
+          closeIcon.classList.remove('hidden');
+        } else {
+          mobileMenu.classList.add('hidden');
+          burgerIcon.classList.remove('hidden');
+          closeIcon.classList.add('hidden');
+        }
+      });
+
+      // Закрытие меню при клике на любую ссылку
+      mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.add('hidden');
+          burgerIcon.classList.remove('hidden');
+          closeIcon.classList.add('hidden');
+        });
+      });
+    }
+
+    // 2. Копирование @Pavel_Vasilev с красивым тостом
+    const copyBtn = document.getElementById('copyUsernameBtn');
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMessage');
+
+    function showToast(text) {
+      if (!toast) return;
+      toastMsg.innerText = text;
+      toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+      }, 3000);
+    }
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText('@Pavel_Vasilev').then(() => {
+          showToast('Юзернейм @Pavel_Vasilev скопирован!');
+        }).catch(() => {
+          showToast('Контакт: @Pavel_Vasilev');
+        });
+      });
+    }
+
+    // 3. Интерактивный калькулятор стоимости
+    const typeInputs = document.querySelectorAll('input[name="project_type"]');
+    const typeLabels = document.querySelectorAll('.calc-type-label');
+    const addonCheckboxes = document.querySelectorAll('.calc-addon input[type="checkbox"]');
+    const urgencyInputs = document.querySelectorAll('input[name="urgency"]');
+    const calcPriceEl = document.getElementById('calcPrice');
+    const calcDaysEl = document.getElementById('calcDays');
+    const calcTgBtn = document.getElementById('calcTelegramBtn');
+
+    function calculateTotal() {
+      let basePrice = 22000;
+      let totalDays = 4;
+      let projectTitle = 'Telegram-бот для бизнеса';
+
+      // Выбранный тип
+      typeInputs.forEach(input => {
+        if (input.checked) {
+          basePrice = parseInt(input.dataset.base, 10) || 22000;
+          totalDays = parseInt(input.dataset.days, 10) || 4;
+          projectTitle = input.dataset.title || 'Проект';
+        }
+      });
+
+      // Подсветка активной карточки типа
+      typeLabels.forEach(label => {
+        const radio = label.querySelector('input[type="radio"]');
+        if (radio && radio.checked) {
+          label.classList.add('calc-card-active');
+        } else {
+          label.classList.remove('calc-card-active');
+        }
+      });
+
+      // Дополнительные модули
+      let selectedAddons = [];
+      addonCheckboxes.forEach(cb => {
+        if (cb.checked) {
+          basePrice += parseInt(cb.dataset.price, 10) || 0;
+          totalDays += parseInt(cb.dataset.days, 10) || 0;
+          selectedAddons.push(cb.dataset.name);
+        }
+      });
+
+      // Срочность
+      let isExpress = false;
+      urgencyInputs.forEach(u => {
+        if (u.checked && u.value === 'express') {
+          isExpress = true;
+        }
+      });
+
+      if (isExpress) {
+        basePrice = Math.round(basePrice * 1.20);
+        totalDays = Math.max(3, Math.round(totalDays * 0.6));
+      }
+
+      // Форматируем вывод
+      const formattedPrice = basePrice.toLocaleString('ru-RU') + ' ₽';
+      let daysText = '';
+      if (totalDays <= 4) {
+        daysText = `• срок: 3–4 рабочих дня`;
+      } else if (totalDays <= 7) {
+        daysText = `• срок: 5–7 рабочих дней`;
+      } else {
+        daysText = `• срок: 8–12 рабочих дней`;
+      }
+
+      if (calcPriceEl) calcPriceEl.innerText = formattedPrice;
+      if (calcDaysEl) calcDaysEl.innerText = daysText;
+
+      // Формируем ссылку в Telegram с предзаполненным сообщением
+      let tgText = `Здравствуйте, Павел! Рассчитал проект на вашем сайте:\n` +
+                   `• Проект: ${projectTitle}\n`;
+      if (selectedAddons.length > 0) {
+        tgText += `• Модули: ${selectedAddons.join(', ')}\n`;
+      }
+      tgText += `• Срочность: ${isExpress ? 'Срочно (+20%)' : 'Стандартный темп'}\n` +
+                `• Оценка: ${formattedPrice} (${daysText.replace('• ', '')})\n\n` +
+                `Хочу обсудить детали и запустить в работу!`;
+
+      if (calcTgBtn) {
+        calcTgBtn.href = `https://t.me/Pavel_Vasilev?text=${encodeURIComponent(tgText)}`;
+      }
+    }
+
+    // Слушатели событий на калькулятор
+    typeInputs.forEach(i => i.addEventListener('change', calculateTotal));
+    addonCheckboxes.forEach(c => c.addEventListener('change', calculateTotal));
+    urgencyInputs.forEach(u => u.addEventListener('change', calculateTotal));
+
+    // Первый расчет при загрузке
+    calculateTotal();
+  </script>
+
+</body>
+</html>
